@@ -1,7 +1,3 @@
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
-  set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
-endif()
-
 cmake_minimum_required(VERSION 3.20.0)
 
 set(gltf_ver_maj 1)
@@ -16,19 +12,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 find_package(simdjson REQUIRED)
 
-# include(cmake/FindSimdjson.cmake)
-
-add_compile_definitions(NOMINMAX _USE_MATH_DEFINES) # Windows is trash
-
-# include(cmake/wall.cmake)
-
-if (GLTF_ENABLE_ASAN)
-  set(GLWRAP_ENABLE_ASAN TRUE)
-  include(cmake/asan.cmake)
-endif()
-
 add_library(gltf "${PROJECT_SOURCE_DIR}/gltf.cpp")
-target_include_directories(gltf PUBLIC "${PROJECT_SOURCE_DIR}")
+target_include_directories(gltf PRIVATE "${PROJECT_SOURCE_DIR}")
 target_link_libraries(gltf PRIVATE simdjson)
 set_target_properties(gltf PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/gltf.hpp")
 
@@ -39,23 +24,34 @@ endif()
 # packaging
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-    "${PROJECT_SOURCE_DIR}/cmake/gltfConfig.cmake.in"
-    "${PROJECT_BINARY_DIR}/cmake/gltfConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/gltf"
+  "${PROJECT_SOURCE_DIR}/cmake/gltfConfig.cmake.in"
+  "${PROJECT_BINARY_DIR}/cmake/gltfConfig.cmake"
+  INSTALL_DESTINATION "lib/cmake/gltf"
 )
+
 write_basic_package_version_file(
-    "${PROJECT_BINARY_DIR}/cmake/gltfConfigVersion.cmake"
-    VERSION ${gltf_ver}
-    COMPATIBILITY AnyNewerVersion
-)
-install(
-    TARGETS gltf
-    LIBRARY DESTINATION lib
+  "${PROJECT_BINARY_DIR}/cmake/gltfConfigVersion.cmake"
+  VERSION ${gltf_ver}
+  COMPATIBILITY AnyNewerVersion
 )
 
 install(
-    FILES
-        "${PROJECT_BINARY_DIR}/cmake/gltfConfig.cmake"
-        "${PROJECT_BINARY_DIR}/cmake/gltfConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/gltf"
+  TARGETS gltf
+  EXPORT gltfTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+)
+
+install(
+  EXPORT gltfTargets
+  FILE gltfTargets.cmake
+  DESTINATION lib/cmake/gltf
+)
+
+install(
+  FILES
+    "${PROJECT_BINARY_DIR}/cmake/gltfConfig.cmake"
+    "${PROJECT_BINARY_DIR}/cmake/gltfConfigVersion.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/gltf"
 )
