@@ -14,7 +14,7 @@ find_package(simdjson REQUIRED)
 
 add_library(gltf "${PROJECT_SOURCE_DIR}/gltf.cpp")
 target_include_directories(gltf PRIVATE "${PROJECT_SOURCE_DIR}")
-target_link_libraries(gltf PRIVATE simdjson)
+target_link_libraries(gltf PUBLIC simdjson)
 set_target_properties(gltf PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/gltf.hpp")
 
 if (GLTF_BUILD_EXAMPLE)
