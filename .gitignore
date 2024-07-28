@@ -9,3 +9,5 @@ untracked/
 vcpkg_installed/
 subprojects/*
 !subprojects/*.wrap
+/.direnv
+/result
