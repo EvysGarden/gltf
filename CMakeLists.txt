@@ -41,11 +41,11 @@ include(CMakePackageConfigHelpers)
 configure_package_config_file(
     "${PROJECT_SOURCE_DIR}/cmake/gltfConfig.cmake.in"
     "${PROJECT_BINARY_DIR}/cmake/gltfConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/result"
+    INSTALL_DESTINATION "lib/cmake/gltf"
 )
 write_basic_package_version_file(
     "${PROJECT_BINARY_DIR}/cmake/gltfConfigVersion.cmake"
-    VERSION ${Result_ver}
+    VERSION ${gltf_ver}
     COMPATIBILITY AnyNewerVersion
 )
 install(
@@ -57,5 +57,5 @@ install(
     FILES
         "${PROJECT_BINARY_DIR}/cmake/gltfConfig.cmake"
         "${PROJECT_BINARY_DIR}/cmake/gltfConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/result"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/gltf"
 )
